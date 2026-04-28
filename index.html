@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ULTRAKIT — Football Jerseys</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--nero:#0a0a0a;--bianco:#f5f3ee;--verde:#c8f000;--grigio:#1a1a1a;--grigio2:#2a2a2a;--muted:#888;}
+  *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+  body{background:var(--nero);color:var(--bianco);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+  #loader{position:fixed;inset:0;z-index:9999;background:var(--nero);display:flex;align-items:center;justify-content:center;transition:opacity .6s ease .3s,visibility .6s ease .3s;}
+  #loader.hide{opacity:0;visibility:hidden;}
+  .loader-text{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,15vw,12rem);letter-spacing:.1em;color:var(--verde);animation:pulse .8s ease infinite alternate;}
+  @keyframes pulse{to{opacity:.3;letter-spacing:.3em;}}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 3rem;background:rgba(10,10,10,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(200,240,0,.1);transform:translateY(-100%);transition:transform .6s ease 1s;}
+  nav.visible{transform:translateY(0);}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.12em;color:var(--verde);text-decoration:none;}
+  .nav-links{display:flex;gap:2rem;list-style:none;}
+  .nav-links a{color:var(--bianco);text-decoration:none;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;opacity:.7;transition:opacity .2s,color .2s;}
+  .nav-links a:hover{opacity:1;color:var(--verde);}
+  .cart-btn{background:var(--verde);color:var(--nero);border:none;padding:.6rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;letter-spacing:.05em;cursor:pointer;transition:transform .15s,background .15s;}
+  .cart-btn:hover{transform:scale(1.04);background:#d4ff00;}
+  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 3rem 5rem;position:relative;overflow:hidden;}
+  .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 80% 50%,rgba(200,240,0,.06),transparent 70%),radial-gradient(ellipse 30% 40% at 20% 80%,rgba(200,240,0,.04),transparent 60%);}
+  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px;}
+  .hero-number{position:absolute;right:-.05em;top:50%;transform:translateY(-50%);font-family:'Bebas Neue',sans-serif;font-size:clamp(18rem,35vw,30rem);color:rgba(200,240,0,.04);line-height:1;user-select:none;animation:float 8s ease-in-out infinite;}
+  @keyframes float{0%,100%{transform:translateY(-50%) translateX(0)}50%{transform:translateY(-52%) translateX(-10px)}}
+  .hero-badge{display:inline-block;background:var(--verde);color:var(--nero);font-size:.72rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;padding:.35rem 1rem;margin-bottom:1.5rem;opacity:0;transform:translateY(20px);animation:fadeUp .6s ease 1.2s forwards;}
+  .hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,10vw,9rem);line-height:.9;letter-spacing:.02em;opacity:0;transform:translateY(40px);animation:fadeUp .8s ease 1.4s forwards;}
+  .hero-title .accent{color:var(--verde);display:block;}
+  .hero-sub{margin-top:1.5rem;max-width:480px;font-size:1rem;line-height:1.7;color:var(--muted);opacity:0;transform:translateY(20px);animation:fadeUp .7s ease 1.7s forwards;}
+  .hero-ctas{display:flex;gap:1rem;margin-top:2.5rem;flex-wrap:wrap;opacity:0;transform:translateY(20px);animation:fadeUp .7s ease 1.9s forwards;}
+  .btn-primary{background:var(--verde);color:var(--nero);border:none;padding:1rem 2.5rem;font-family:'DM Sans',sans-serif;font-weight:500;font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:transform .15s,background .15s;text-decoration:none;display:inline-block;}
+  .btn-primary:hover{transform:translateY(-3px);background:#d4ff00;}
+  .btn-secondary{background:transparent;color:var(--bianco);border:1px solid rgba(245,243,238,.3);padding:1rem 2.5rem;font-family:'DM Sans',sans-serif;font-weight:400;font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:border-color .2s,transform .15s;text-decoration:none;display:inline-block;}
+  .btn-secondary:hover{border-color:var(--verde);transform:translateY(-3px);}
+  .hero-stats{display:flex;gap:3rem;margin-top:4rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.08);opacity:0;transform:translateY(20px);animation:fadeUp .7s ease 2.1s forwards;}
+  .stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--verde);line-height:1;}
+  .stat-label{font-size:.75rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:.3rem;}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+  .ticker{background:var(--verde);color:var(--nero);padding:.9rem 0;overflow:hidden;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.12em;}
+  .ticker-track{display:flex;animation:ticker 22s linear infinite;width:max-content;}
+  .ticker-track span{white-space:nowrap;padding:0 2rem;}
+  @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  section{padding:5rem 3rem;}
+  .section-label{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--verde);margin-bottom:1rem;}
+  .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);line-height:1;letter-spacing:.02em;margin-bottom:1rem;}
+  .section-sub{color:var(--muted);font-size:.95rem;line-height:1.7;max-width:520px;margin-bottom:3rem;}
+  #categories{background:var(--grigio);}
+  .cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5px;}
+  .cat-card{background:var(--nero);padding:3rem 2rem;cursor:pointer;transition:background .3s;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.04);}
+  .cat-card:hover{background:var(--grigio2);}
+  .cat-card:hover .cat-arrow{transform:translate(4px,-4px);color:var(--verde);}
+  .cat-icon{font-size:3rem;margin-bottom:1.5rem;display:block;}
+  .cat-name{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.05em;margin-bottom:.5rem;}
+  .cat-desc{font-size:.85rem;color:var(--muted);line-height:1.6;}
+  .cat-arrow{position:absolute;top:2rem;right:2rem;font-size:1.2rem;color:var(--muted);transition:transform .2s,color .2s;}
+  .cat-count{margin-top:1.5rem;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--verde);}
+  .products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;}
+  .product-card{background:var(--grigio);border:1px solid rgba(255,255,255,.05);cursor:pointer;transition:transform .3s,border-color .3s;position:relative;overflow:hidden;}
+  .product-card:hover{transform:translateY(-6px);border-color:var(--verde);}
+  .product-img{width:100%;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:6rem;position:relative;overflow:hidden;}
+  .product-img-bg{position:absolute;inset:0;transition:transform .4s ease;}
+  .product-card:hover .product-img-bg{transform:scale(1.05);}
+  .product-badge{position:absolute;top:1rem;left:1rem;background:var(--verde);color:var(--nero);font-size:.65rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;padding:.25rem .7rem;}
+  .product-info{padding:1.25rem;}
+  .product-team{font-size:.72rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.4rem;}
+  .product-name{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.05em;margin-bottom:.8rem;}
+  .product-footer{display:flex;align-items:center;justify-content:space-between;}
+  .product-price{font-size:1.1rem;font-weight:500;}
+  .product-price-old{font-size:.85rem;color:var(--muted);text-decoration:line-through;margin-left:.5rem;}
+  .add-btn{background:transparent;color:var(--bianco);border:1px solid rgba(255,255,255,.2);padding:.5rem 1rem;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s,border-color .2s;}
+  .add-btn:hover{background:var(--verde);color:var(--nero);border-color:var(--verde);}
+  #customize{background:linear-gradient(135deg,var(--nero) 0%,#0d1200 100%);border-top:1px solid rgba(200,240,0,.1);border-bottom:1px solid rgba(200,240,0,.1);}
+  .custom-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+  .custom-preview{aspect-ratio:1;background:var(--grigio);border:1px solid rgba(200,240,0,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;font-family:'Bebas Neue',sans-serif;}
+  .jersey-preview{font-size:8rem;position:relative;z-index:2;filter:drop-shadow(0 0 40px rgba(200,240,0,.3));animation:float 4s ease-in-out infinite;}
+  .custom-name-display{font-size:2rem;color:var(--verde);letter-spacing:.2em;margin-top:-.5rem;z-index:2;position:relative;text-transform:uppercase;}
+  .custom-number-display{font-size:3.5rem;color:var(--bianco);z-index:2;position:relative;line-height:1;}
+  .custom-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(200,240,0,.08),transparent 70%);}
+  .custom-options{display:flex;flex-direction:column;gap:1.5rem;}
+  .custom-option label{display:block;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;}
+  .custom-option input,.custom-option select{width:100%;background:var(--grigio);color:var(--bianco);border:1px solid rgba(255,255,255,.1);padding:.8rem 1rem;font-family:'DM Sans',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s;}
+  .custom-option input:focus,.custom-option select:focus{border-color:var(--verde);}
+  .custom-option select option{background:var(--nero);}
+  .color-swatches{display:flex;gap:.75rem;flex-wrap:wrap;}
+  .swatch{width:36px;height:36px;cursor:pointer;border:2px solid transparent;transition:border-color .2s;}
+  .swatch.active,.swatch:hover{border-color:var(--verde);}
+  #vintage{background:var(--grigio);}
+  .vintage-scroll{display:flex;gap:1.5rem;overflow-x:auto;padding-bottom:1rem;scrollbar-width:thin;scrollbar-color:var(--verde) var(--grigio2);}
+  .vintage-item{min-width:220px;flex-shrink:0;background:var(--nero);border:1px solid rgba(255,255,255,.06);padding:1.5rem;cursor:pointer;transition:border-color .2s;}
+  .vintage-item:hover{border-color:var(--verde);}
+  .vintage-era{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--verde);margin-bottom:.5rem;}
+  .vintage-team{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.05em;margin-bottom:.3rem;}
+  .vintage-detail{font-size:.82rem;color:var(--muted);margin-bottom:1rem;}
+  .vintage-price{font-size:1.1rem;font-weight:500;}
+  .vintage-emoji{font-size:3.5rem;display:block;margin-bottom:1rem;}
+  #why{background:var(--nero);}
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;}
+  .feature-item{padding:2rem;border:1px solid rgba(255,255,255,.06);}
+  .feature-icon{font-size:2rem;margin-bottom:1rem;display:block;}
+  .feature-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.05em;margin-bottom:.6rem;}
+  .feature-text{font-size:.85rem;color:var(--muted);line-height:1.7;}
+  #reviews{background:var(--grigio);}
+  .reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;}
+  .review-card{background:var(--nero);border:1px solid rgba(255,255,255,.06);padding:1.75rem;}
+  .review-stars{color:var(--verde);font-size:.9rem;margin-bottom:1rem;letter-spacing:.1em;}
+  .review-text{font-size:.9rem;line-height:1.7;color:var(--bianco);margin-bottom:1.25rem;font-style:italic;}
+  .review-author{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+  #finale{background:var(--verde);color:var(--nero);text-align:center;padding:6rem 3rem;}
+  .btn-dark{background:var(--nero);color:var(--verde);border:none;padding:1.1rem 3rem;font-family:'DM Sans',sans-serif;font-weight:500;font-size:.95rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:transform .15s;text-decoration:none;display:inline-block;}
+  .btn-dark:hover{transform:translateY(-3px);}
+  footer{background:var(--nero);padding:3rem;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+  .footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--verde);letter-spacing:.15em;}
+  .footer-links{display:flex;gap:2rem;}
+  .footer-links a{color:var(--muted);text-decoration:none;font-size:.82rem;transition:color .2s;}
+  .footer-links a:hover{color:var(--verde);}
+  .footer-copy{color:var(--muted);font-size:.78rem;}
+  .toast{position:fixed;bottom:2rem;right:2rem;z-index:999;background:var(--verde);color:var(--nero);padding:1rem 1.5rem;font-weight:500;font-size:.9rem;transform:translateY(100px);opacity:0;transition:transform .3s,opacity .3s;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  @media(max-width:768px){nav{padding:1rem 1.5rem;}.nav-links{display:none;}.hero{padding:0 1.5rem 3rem;}section{padding:3rem 1.5rem;}.hero-stats{gap:1.5rem;flex-wrap:wrap;}.custom-layout{grid-template-columns:1fr;gap:2rem;}}
+</style>
+</head>
+<body>
+<div id="loader"><div class="loader-text">ULTRAKIT</div></div>
+<nav id="navbar">
+  <a href="#" class="logo">ULTRAKIT</a>
+  <ul class="nav-links">
+    <li><a href="#categories">Collections</a></li>
+    <li><a href="#customize">Customize</a></li>
+    <li><a href="#vintage">Vintage</a></li>
+    <li><a href="#why">About</a></li>
+  </ul>
+  <button class="cart-btn" onclick="showToast('Cart opened!')">🛒 Cart (0)</button>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-number">10</div>
+  <div style="position:relative;z-index:2;">
+    <span class="hero-badge">⚡ New 2025 Collection — Available Now</span>
+    <h1 class="hero-title">WEAR YOUR<br><span class="accent">PASSION</span></h1>
+    <p class="hero-sub">Official kits, rare vintage gems and fully custom jerseys. The finest football shirt store online. Ships worldwide in 24h.</p>
+    <div class="hero-ctas">
+      <a href="#categories" class="btn-primary">Shop Collections →</a>
+      <a href="#customize" class="btn-secondary">Build Your Kit</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">2,400+</div><div class="stat-label">Jerseys in stock</div></div>
+      <div><div class="stat-num">98%</div><div class="stat-label">Happy customers</div></div>
+      <div><div class="stat-num">24h</div><div class="stat-label">Express shipping</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker"><div class="ticker-track">
+  <span>⚡ NEW DROPS EVERY WEEK</span><span>🏆 OFFICIAL PREMIER LEAGUE KITS</span><span>⚽ VINTAGE 80s, 90s & 2000s</span><span>🎨 FULL CUSTOM PRINTING</span><span>🚀 WORLDWIDE SHIPPING IN 24H</span><span>💳 SECURE CHECKOUT</span>
+  <span>⚡ NEW DROPS EVERY WEEK</span><span>🏆 OFFICIAL PREMIER LEAGUE KITS</span><span>⚽ VINTAGE 80s, 90s & 2000s</span><span>🎨 FULL CUSTOM PRINTING</span><span>🚀 WORLDWIDE SHIPPING IN 24H</span><span>💳 SECURE CHECKOUT</span>
+</div></div>
+
+<section id="categories">
+  <div class="reveal">
+    <p class="section-label">// Explore</p>
+    <h2 class="section-title">Our<br>Collections</h2>
+    <p class="section-sub">From the Premier League to European giants, iconic vintage to bespoke custom kits — everything in one place.</p>
+  </div>
+  <div class="cat-grid reveal">
+    <div class="cat-card" onclick="filterCategory('new')"><span class="cat-arrow">↗</span><span class="cat-icon">🏆</span><div class="cat-name">New Kits</div><div class="cat-desc">Latest 2024/25 season jerseys. Official and high-quality replicas for all major clubs.</div><div class="cat-count">847 items</div></div>
+    <div class="cat-card" onclick="filterCategory('vintage')"><span class="cat-arrow">↗</span><span class="cat-icon">📻</span><div class="cat-name">Vintage & Retro</div><div class="cat-desc">Unique pieces from the 80s, 90s and 2000s. Wearable football history you won't find anywhere else.</div><div class="cat-count">312 items</div></div>
+    <div class="cat-card" onclick="filterCategory('custom')"><span class="cat-arrow">↗</span><span class="cat-icon">🎨</span><div class="cat-name">Custom Kits</div><div class="cat-desc">Pick your colours, name and number. Design the perfect jersey for yourself or as a gift.</div><div class="cat-count">Unlimited designs</div></div>
+    <div class="cat-card" onclick="filterCategory('national')"><span class="cat-arrow">↗</span><span class="cat-icon">🌍</span><div class="cat-name">National Teams</div><div class="cat-desc">England, Brazil, Argentina, Italy and more. Every nation, every era.</div><div class="cat-count">289 items</div></div>
+  </div>
+</section>
+
+<section id="products" style="background:var(--nero);">
+  <div class="reveal">
+    <p class="section-label">// Best Sellers</p>
+    <h2 class="section-title">Top Picks</h2>
+    <p class="section-sub">The most loved jerseys by the ULTRAKIT community.</p>
+  </div>
+  <div class="products-grid reveal">
+    <div class="product-card">
+      <div class="product-img" style="background:linear-gradient(135deg,#0d2b6b,#001e5e);"><div class="product-img-bg" style="background:linear-gradient(135deg,#0d2b6b,#001e5e);"></div><span style="font-size:5rem;z-index:2;position:relative;">⚽</span><span class="product-badge">BEST SELLER</span></div>
+      <div class="product-info"><div class="product-team">Inter Milan</div><div class="product-name">Home Kit 2024/25</div><div class="product-footer"><div><span class="product-price">€89</span><span class="product-price-old">€110</span></div><button class="add-btn" onclick="addToCart('Inter Home 24/25')">+ Add</button></div></div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" style="background:linear-gradient(135deg,#b91c1c,#7f1d1d);"><div class="product-img-bg" style="background:linear-gradient(135deg,#b91c1c,#7f1d1d);"></div><span style="font-size:5rem;z-index:2;position:relative;">🔴</span><span class="product-badge">NEW</span></div>
+      <div class="product-info"><div class="product-team">Manchester United</div><div class="product-name">Away Kit 2024/25</div><div class="product-footer"><div><span class="product-price">€94</span></div><button class="add-btn" onclick="addToCart('Man Utd Away 24/25')">+ Add</button></div></div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" style="background:linear-gradient(135deg,#2d6a2d,#1a4a1a);"><div class="product-img-bg" style="background:linear-gradient(135deg,#2d6a2d,#1a4a1a);"></div><span style="font-size:5rem;z-index:2;position:relative;">💛</span><span class="product-badge">VINTAGE '94</span></div>
+      <div class="product-info"><div class="product-team">Brazil</div><div class="product-name">World Cup 1994</div><div class="product-footer"><div><span class="product-price">€120</span><span class="product-price-old">€150</span></div><button class="add-btn" onclick="addToCart('Brazil 94')">+ Add</button></div></div>
+    </div>
+    <div class="product-card">
+      <div class="product-img" style="background:linear-gradient(135deg,#1a1a4e,#12124a);"><div class="product-img-bg" style="background:linear-gradient(135deg,#1a1a4e,#12124a);"></div><span style="font-size:5rem;z-index:2;position:relative;">⚪</span></div>
+      <div class="product-info"><div class="product-team">Real Madrid</div><div class="product-name">Home Kit 2024/25</div><div class="product-footer"><div><span class="product-price">€85</span></div><button class="add-btn" onclick="addToCart('Real Madrid Home 24/25')">+ Add</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="customize">
+  <div class="custom-layout">
+    <div class="custom-preview reveal">
+      <div class="custom-glow"></div>
+      <div class="jersey-preview">👕</div>
+      <div class="custom-name-display" id="nameDisplay">YOUR NAME</div>
+      <div class="custom-number-display" id="numDisplay">10</div>
+    </div>
+    <div class="reveal">
+      <p class="section-label">// Build Your Kit</p>
+      <h2 class="section-title">100%<br><span style="color:var(--verde)">Yours</span></h2>
+      <p class="section-sub">Choose everything: colour, font, name, number and badge. Delivered in 5–7 business days.</p>
+      <div class="custom-options">
+        <div class="custom-option"><label>Your name</label><input type="text" id="customName" placeholder="e.g. SMITH" maxlength="12" oninput="updatePreview()"></div>
+        <div class="custom-option"><label>Your number</label><input type="number" id="customNumber" placeholder="10" min="1" max="99" oninput="updatePreview()"></div>
+        <div class="custom-option"><label>Jersey type</label><select><option>Base Jersey — from €45</option><option>Premium Jersey — from €75</option><option>Pro Player Jersey — from €110</option></select></div>
+        <div class="custom-option"><label>Main colour</label><div class="color-swatches">
+          <div class="swatch active" style="background:#0d2b6b" onclick="selectSwatch(this)"></div>
+          <div class="swatch" style="background:#b91c1c" onclick="selectSwatch(this)"></div>
+          <div class="swatch" style="background:#1a4a1a" onclick="selectSwatch(this)"></div>
+          <div class="swatch" style="background:#f5f3ee" onclick="selectSwatch(this)"></div>
+          <div class="swatch" style="background:#c8f000" onclick="selectSwatch(this)"></div>
+          <div class="swatch" style="background:#0a0a0a;border:1px solid #444" onclick="selectSwatch(this)"></div>
+        </div></div>
+        <button class="btn-primary" onclick="addToCart('Custom Jersey')">🎨 Order Now — from €45</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="vintage">
+  <div class="reveal">
+    <p class="section-label">// Football History</p>
+    <h2 class="section-title">Vintage<br>Collection</h2>
+    <p class="section-sub">One-of-a-kind pieces that tell the story of football. Limited stock, authenticity guaranteed.</p>
+  </div>
+  <div class="vintage-scroll reveal">
+    <div class="vintage-item"><span class="vintage-emoji">🔵</span><div class="vintage-era">1988 — Serie A</div><div class="vintage-team">Napoli — Maradona</div><div class="vintage-detail">Original home jersey from the Maradona era. Excellent condition.</div><div class="vintage-price">€340</div></div>
+    <div class="vintage-item"><span class="vintage-emoji">🔴</span><div class="vintage-era">1999 — Champions League</div><div class="vintage-team">Man United Treble</div><div class="vintage-detail">Historic treble season. Numbered, with cup patch.</div><div class="vintage-price">€290</div></div>
+    <div class="vintage-item"><span class="vintage-emoji">🏳️</span><div class="vintage-era">1994 — World Cup</div><div class="vintage-team">Italy — Roberto Baggio</div><div class="vintage-detail">The jersey of the missed penalty. A piece of football history.</div><div class="vintage-price">€420</div></div>
+    <div class="vintage-item"><span class="vintage-emoji">💛</span><div class="vintage-era">1996 — Bundesliga</div><div class="vintage-team">Borussia Dortmund</div><div class="vintage-detail">90s Champions kit. Original Opel logo. Size L.</div><div class="vintage-price">€185</div></div>
+    <div class="vintage-item"><span class="vintage-emoji">🟣</span><div class="vintage-era">2002 — Champions League</div><div class="vintage-team">Real Madrid — Zidane</div><div class="vintage-detail">Season of the final volley. Signed.</div><div class="vintage-price">€510</div></div>
+    <div class="vintage-item"><span class="vintage-emoji">🔵</span><div class="vintage-era">2006 — World Cup</div><div class="vintage-team">France — Zidane</div><div class="vintage-detail">Zidane's last ever jersey. The Berlin final.</div><div class="vintage-price">€380</div></div>
+  </div>
+  <div style="margin-top:2rem;" class="reveal"><a href="#" class="btn-secondary">Browse All Vintage →</a></div>
+</section>
+
+<section id="why">
+  <div class="reveal">
+    <p class="section-label">// Why Choose Us</p>
+    <h2 class="section-title">The Best<br>Jersey Store</h2>
+  </div>
+  <div class="features-grid reveal">
+    <div class="feature-item"><span class="feature-icon">🔐</span><div class="feature-title">100% Authentic</div><div class="feature-text">Every jersey is manually verified. Certificate of authenticity included with all vintage pieces.</div></div>
+    <div class="feature-item"><span class="feature-icon">🚀</span><div class="feature-title">Ships in 24h</div><div class="feature-text">Orders placed before 2PM ship same day. Real-time tracking via SMS and email.</div></div>
+    <div class="feature-item"><span class="feature-icon">↩️</span><div class="feature-title">Free Returns</div><div class="feature-text">30 days to return, no questions asked. Full refund guaranteed within 48 hours.</div></div>
+    <div class="feature-item"><span class="feature-icon">💬</span><div class="feature-title">Real Support</div><div class="feature-text">Live chat 7 days a week. We reply in under 10 minutes — real humans, not bots.</div></div>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="reveal">
+    <p class="section-label">// Community</p>
+    <h2 class="section-title">What Fans<br>Are Saying</h2>
+  </div>
+  <div class="reviews-grid reveal">
+    <div class="review-card"><div class="review-stars">★★★★★</div><div class="review-text">"Ordered a custom jersey for my son's birthday. Incredible quality, arrived in 3 days. The printing was perfect. I'll definitely order again!"</div><div class="review-author">Mark T. — London</div></div>
+    <div class="review-card"><div class="review-stars">★★★★★</div><div class="review-text">"Finally found the '88 Napoli Maradona shirt I'd been hunting for years. Authentic, in perfect condition. Fair price for such a rare piece."</div><div class="review-author">Roberto R. — Naples</div></div>
+    <div class="review-card"><div class="review-stars">★★★★☆</div><div class="review-text">"Very professional site, great quality jerseys. One tip: sizes run a bit large, so order one size down. Would definitely recommend."</div><div class="review-author">Julia M. — Berlin</div></div>
+  </div>
+</section>
+
+<section id="finale">
+  <p class="section-label" style="color:rgba(0,0,0,.5)">// Don't Wait</p>
+  <h2 class="section-title" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,6vw,5rem);line-height:1;letter-spacing:.02em;color:var(--nero);margin-bottom:1rem;">Your Jersey<br>Is Waiting</h2>
+  <p class="section-sub" style="color:rgba(0,0,0,.6);margin:0 auto 2.5rem;">2,400+ jerseys available. Free shipping over €80. Free returns for 30 days.</p>
+  <a href="#categories" class="btn-dark">Start Shopping →</a>
+</section>
+
+<footer>
+  <div class="footer-logo">ULTRAKIT</div>
+  <div class="footer-links"><a href="#">About</a><a href="#">Shipping</a><a href="#">Returns</a><a href="#">Privacy</a><a href="#">Contact</a></div>
+  <div class="footer-copy">© 2025 ULTRAKIT. All rights reserved.</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loader').classList.add('hide');document.getElementById('navbar').classList.add('visible');},1200);});
+  const reveals=document.querySelectorAll('.reveal');
+  const obs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);obs.unobserve(e.target);}});},{threshold:.1});
+  reveals.forEach(el=>obs.observe(el));
+  let cartCount=0;
+  function addToCart(name){cartCount++;document.querySelector('.cart-btn').textContent=`🛒 Cart (${cartCount})`;showToast(`✓ "${name}" added to cart!`);}
+  function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+  function updatePreview(){document.getElementById('nameDisplay').textContent=(document.getElementById('customName').value.toUpperCase()||'YOUR NAME');document.getElementById('numDisplay').textContent=(document.getElementById('customNumber').value||'10');}
+  function selectSwatch(el){document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));el.classList.add('active');}
+  function filterCategory(cat){showToast(`"${cat}" filter selected — full catalogue coming soon!`);}
+  window.addEventListener('scroll',()=>{document.getElementById('navbar').style.background=window.scrollY>50?'rgba(10,10,10,.98)':'rgba(10,10,10,.85)';});
+</script>
+</body>
+</html>
